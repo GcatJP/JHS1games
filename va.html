@@ -13,7 +13,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Adventure Island" />
 
-    <title>Adventure Island: JHS1</title>
+    <title>Adventure Island: JHS 1</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -35,31 +35,12 @@
       :root {
         --font-chalk:
           "Chalkboard SE", "Chalkboard", "Comic Neue", "Comic Sans MS", cursive;
-        --colour-btn-face: pink;
+        --colour-btn-face: black;
         --colour-btn-active: pink;
         --colour-btn-border: #000000;
-        --colour-heading-text: orange;
+        --colour-heading-text: darkorange;
       }
 
-      .rotate-message {
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 100;
-        background: pink;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 2em;
-      }
-      .rotate-message p {
-        color: var(--colour-heading-text);
-        -webkit-text-stroke: 0.8px darkorange;
-        font-family: var(--font-chalk);
-        font-weight: bold;
-        font-size: clamp(1.2rem, 6vw, 2rem);
-        line-height: 1.4;
-      }
       html,
       body {
         width: 100%;
@@ -72,7 +53,7 @@
         font-family: var(--font-chalk);
         background-color: pink;
         background-size: cover;
-        background-position: center;
+        background-position: center center;
         background-repeat: no-repeat;
         display: flex;
         flex-direction: column;
@@ -83,7 +64,31 @@
         overflow: hidden;
         transition: background 0.3s ease;
       }
-
+      .back-btn {
+        position: fixed;
+        top: max(16px, env(safe-area-inset-top, 16px));
+        left: max(16px, env(safe-area-inset-left, 16px));
+        z-index: 60;
+        display: flex;
+        align-items: center;
+        gap: 0.3em;
+        background: pink;
+        color: black;
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 999px;
+        padding: 0.4em 0.9em;
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        font-size: 1rem;
+        text-decoration: none;
+        cursor: pointer;
+        -webkit-text-stroke: 0;
+        transition: transform 0.1s ease;
+      }
+      .back-btn:active {
+        transform: translateY(2px);
+        background: var(--colour-btn-active);
+      }
       h1 {
         font-family: var(--font-chalk);
         color: var(--colour-heading-text);
@@ -100,13 +105,14 @@
         align-items: center;
         justify-content: center;
         width: 100%;
+        min-height: 0;
       }
 
       .btn {
         font-family: var(--font-chalk);
         font-weight: bold;
         color: yellow;
-        background: var(--colour-btn-face);
+        background: pink;
         border: 2px solid var(--colour-btn-border);
         border-radius: 10px;
         text-decoration: none;
@@ -140,41 +146,20 @@
       .btn-icon {
         height: 78%;
         width: auto;
-        aspect-ratio: 1 / 1;
+
         flex-shrink: 0;
         object-fit: contain;
         pointer-events: none;
         user-select: none;
       }
-      .back-btn {
-        position: fixed;
-        top: max(16px, env(safe-area-inset-top, 16px));
-        left: max(16px, env(safe-area-inset-left, 16px));
-        z-index: 60;
-        display: flex;
-        align-items: center;
-        gap: 0.3em;
-        background: var(--colour-btn-face);
-        color: var(--colour-btn-border);
-        border: 2px solid var(--colour-btn-border);
-        border-radius: 999px;
-        padding: 0.4em 0.9em;
-        font-family: var(--font-chalk);
-        font-weight: bold;
-        font-size: 1rem;
-        text-decoration: none;
-        cursor: pointer;
-        -webkit-text-stroke: 0;
-        transition: transform 0.1s ease;
-      }
-      .back-btn:active {
-        transform: translateY(2px);
-        background: var(--colour-btn-active);
-      }
+
       /* LANDSCAPE */
       @media screen and (orientation: landscape) {
         body {
-          background-image: url("./jhs1land.png");
+          background-image: url("jhs1land.png");
+          background-size: cover;
+          background-position: center center;
+          background-repeat: no-repeat;
           overflow: hidden;
         }
 
@@ -193,53 +178,48 @@
         .grid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
-          grid-template-rows: repeat(2, 1fr);
-          gap: clamp(10px, 2vw, 24px);
-          width: min(85vw, 900px);
-          height: min(70vh, 460px);
+          grid-template-rows: 1fr;
+          gap: clamp(10px, 3vw, 30px);
+          width: min(90vw, 1000px);
         }
 
         .btn {
-          font-size: clamp(1rem, 4.5vw, 3.4rem);
-          height: clamp(80px, 45vh, 220px);
+          font-size: clamp(1rem, 5vw, 3.6rem);
+          height: clamp(90px, 45vh, 240px);
         }
       }
 
       /* LANDSCAPE IPHONE */
       @media screen and (orientation: landscape) and (max-height: 450px) {
-        .rotate-message {
-          display: flex;
-        }
-
-        h1,
-        .grid-wrapper,
-        .back-btn {
-          display: none;
-        }
-
         body {
-          background-image: url("./jhs1land.png");
+          background-image: url("jhs1land.png");
+          background-size: cover;
+          background-position: center center;
+          background-repeat: no-repeat;
           width: 100vw !important;
           min-width: 100vw !important;
           overflow-x: hidden !important;
         }
 
+        h1 {
+          font-size: clamp(1rem, 7vw, 4rem) !important;
+          padding: 0.1em 0.5em !important;
+          margin-top: -3vh !important;
+          margin-bottom: -8vh !important;
+        }
+
         .grid-wrapper {
-          padding: 1vh 4vw 2vh;
+          padding: 1vh 6vw 2vh;
           margin-top: 1vh;
         }
 
         .grid {
-          grid-template-columns: repeat(2, 1fr) !important;
-          grid-template-rows: repeat(2, 1fr) !important;
-          width: min(92vw, 500px) !important;
-          height: min(80vh, 220px) !important;
-          gap: clamp(6px, 1.5vw, 14px) !important;
+          gap: clamp(10px, 3vw, 24px) !important;
         }
 
         .btn {
-          height: clamp(55px, 34vh, 130px) !important;
-          font-size: clamp(1rem, 6vw, 3.4rem) !important;
+          height: clamp(55px, 34vh, 140px) !important;
+          font-size: clamp(0.85rem, 4.5vw, 2.6rem) !important;
         }
       }
 
@@ -247,13 +227,15 @@
       @media screen and (orientation: portrait) {
         body {
           overflow-y: auto;
-          background-image: url("./jhs1port.png");
+          background-image: url("jhs1port.png");
+          background-size: cover;
+          background-position: center center;
+          background-repeat: no-repeat;
         }
 
         h1 {
           font-size: clamp(1.5rem, 12vw, 4rem);
           padding: 0.3em 0.5em;
-          margin-top: max(20px, env(safe-area-inset-top, 20px));
         }
 
         .grid-wrapper {
@@ -263,14 +245,14 @@
         .grid {
           display: grid;
           grid-template-columns: 1fr;
-          gap: clamp(8px, 5vw, 50px);
+          gap: clamp(12px, 6vw, 60px);
           width: 100%;
           max-width: 520px;
         }
 
         .btn {
-          font-size: clamp(1.1rem, 9vw, 3.6rem);
-          height: clamp(80px, 30vw, 250px);
+          font-size: clamp(1.2rem, 10vw, 4rem);
+          height: clamp(90px, 26vw, 240px);
         }
       }
 
@@ -287,36 +269,31 @@
           padding: 3.5vh 9vw 2vw !important;
         }
 
+        .grid {
+          gap: 28px !important;
+          width: 100% !important;
+          margin-top: -5vh !important;
+        }
+
         .btn {
-          height: clamp(80px, 30vw, 180px) !important;
-          font-size: clamp(1rem, 10vw, 3.1rem) !important;
+          height: clamp(90px, 34vw, 200px) !important;
+          font-size: clamp(1.1rem, 11vw, 3.4rem) !important;
         }
       }
     </style>
   </head>
 
   <body>
-    <div class="rotate-message">
-      <p>🔄 Please rotate your device to portrait mode!</p>
-    </div>
-
-    <h1>Vocabulary</h1>
-    <a class="back-btn" href="index.html">← Back</a>
+    <h1>Adjectives</h1>
+    <a class="back-btn" href="vocab.html">← Back</a>
     <div class="grid-wrapper">
       <div class="grid" id="main-grid">
-        <a class="btn" href="vn.html" style="background-color: #8b5a2b">
-          <span class="btn-text">Nouns</span>
+        <a class="btn" href="vaej.html" style="background-color: #8b5a2b">
+          <span class="btn-text">English to Japanese</span>
         </a>
 
-        <a class="btn" href="vv.html" style="background-color: #8b5a2b">
-          <span class="btn-text">Verbs</span>
-        </a>
-
-        <a class="btn" href="va.html" style="background-color: #8b5a2b">
-          <span class="btn-text">Adjectives</span>
-        </a>
-        <a class="btn" href="vall.html" style="background-color: #8b5a2b">
-          <span class="btn-text">All Vocabulary</span>
+        <a class="btn" href="vaje.html" style="background-color: #8b5a2b">
+          <span class="btn-text">Japanese to English</span>
         </a>
       </div>
     </div>
