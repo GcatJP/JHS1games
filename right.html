@@ -1,0 +1,983 @@
+<!doctype html>
+<!-- saved from url=(0067)file:///Users/graemecattermole/Downloads/grammar_right_wrong_1.html -->
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0,
+          maximum-scale=1.0, user-scalable=no"
+    />
+
+    <!-- iOS Home Screen behaviour -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Grammar Check" />
+
+    <title>Right or Wrong? Grammar Quiz</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com/" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      :root {
+        --font-chalk:
+          "Chalkboard SE", "Chalkboard", "Comic Neue", "Comic Sans MS", cursive;
+        --colour-btn-face: pink;
+        --colour-btn-active: #ff8fb3;
+        --colour-btn-border: #000000;
+        --colour-heading-text: orange;
+        --colour-correct: #4caf50;
+        --colour-wrong: #e53935;
+        --colour-dim: #f0f0f0;
+        --colour-right-btn: #dff5e1;
+        --colour-wrong-btn: #fde1e1;
+      }
+
+      .rotate-message {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        background: pink;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2em;
+      }
+      .rotate-message p {
+        color: var(--colour-heading-text);
+        -webkit-text-stroke: 0.8px darkorange;
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        font-size: clamp(1.2rem, 6vw, 2rem);
+        line-height: 1.4;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow-x: hidden;
+        max-width: 100vw;
+      }
+
+      body {
+        font-family: var(--font-chalk);
+        background-color: #ad1457; /* dark pink */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        min-height: 100dvh;
+        overflow: hidden;
+        transition: background 0.3s ease;
+      }
+
+      h1 {
+        font-family: var(--font-chalk);
+        color: var(--colour-heading-text);
+        width: 100%;
+        text-align: center;
+        letter-spacing: 0.03em;
+        flex-shrink: 0;
+        -webkit-text-stroke: 2px yellow;
+        font-size: clamp(1.4rem, 7vw, 3rem);
+        padding: 0.4em 0.5em 0.2em;
+        margin-top: max(16px, env(safe-area-inset-top, 16px));
+      }
+
+      .back-btn {
+        position: fixed;
+        top: max(16px, env(safe-area-inset-top, 16px));
+        left: max(16px, env(safe-area-inset-left, 16px));
+        z-index: 60;
+        display: flex;
+        align-items: center;
+        gap: 0.3em;
+        background: var(--colour-btn-face);
+        color: var(--colour-btn-border);
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 999px;
+        padding: 0.4em 0.9em;
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        font-size: 1rem;
+        text-decoration: none;
+        cursor: pointer;
+        transition: transform 0.1s ease;
+      }
+      .back-btn:active {
+        transform: translateY(2px);
+        background: var(--colour-btn-active);
+      }
+
+      .progress {
+        color: white;
+        -webkit-text-stroke: 1px darkorange;
+        font-weight: bold;
+        font-size: clamp(0.9rem, 4vw, 1.3rem);
+        text-align: center;
+        margin-bottom: 0.5em;
+        flex-shrink: 0;
+      }
+
+      /* START SCREEN */
+      .start-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3vh;
+        width: 100%;
+        padding: 2vh 6vw;
+      }
+
+      .start-title {
+        color: white;
+        -webkit-text-stroke: 1px darkorange;
+        font-size: clamp(1.2rem, 5.5vw, 1.9rem);
+        text-align: center;
+      }
+
+      .start-sub {
+        color: white;
+        opacity: 0.9;
+        font-size: clamp(0.85rem, 3.6vw, 1.1rem);
+        text-align: center;
+        max-width: 420px;
+      }
+
+      .start-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: clamp(14px, 4vw, 22px);
+        width: 100%;
+        max-width: 340px;
+      }
+
+      .game-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 0;
+        padding: 2vh 6vw 4vh;
+      }
+
+      .question-card {
+        background: white;
+        border: 3px solid var(--colour-btn-border);
+        border-radius: 20px;
+        padding: 1.2em 1.2em;
+        margin-bottom: 4vh;
+        text-align: center;
+        width: 100%;
+        max-width: 560px;
+      }
+      .question-label {
+        font-family: var(--font-chalk);
+        font-size: clamp(0.75rem, 3vw, 0.95rem);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #999;
+        margin-bottom: 0.5em;
+      }
+      .question-sentence {
+        font-size: clamp(1.3rem, 6vw, 2.1rem);
+        color: #222;
+        font-family: var(--font-chalk);
+        line-height: 1.4;
+      }
+
+      .answers {
+        display: flex;
+        flex-direction: row;
+        gap: clamp(12px, 4vw, 24px);
+        width: 100%;
+        max-width: 480px;
+      }
+
+      .btn {
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        color: #333;
+        background: var(--colour-btn-face);
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 10px;
+        text-decoration: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        overflow: hidden;
+        -webkit-user-select: none;
+        user-select: none;
+        transition:
+          transform 0.1s ease,
+          background 0.15s ease;
+        font-size: clamp(1.1rem, 6vw, 2rem);
+        height: clamp(60px, 12vh, 100px);
+        padding: 0 0.6em;
+      }
+      .answers .btn {
+        flex-direction: column;
+        gap: 0.15em;
+      }
+      .answers .btn-right {
+        background: var(--colour-right-btn);
+      }
+      .answers .btn-wrong {
+        background: var(--colour-wrong-btn);
+      }
+      .btn .icon {
+        font-size: 1.4em;
+        line-height: 1;
+      }
+      .btn .label {
+        font-size: 0.55em;
+        letter-spacing: 0.05em;
+      }
+      .btn:active {
+        transform: scale(0.97);
+      }
+
+      .btn.correct {
+        background: var(--colour-correct);
+        color: white;
+      }
+
+      .btn.wrong {
+        background: var(--colour-wrong);
+        color: white;
+      }
+
+      .btn.dim {
+        background: var(--colour-dim);
+        color: #999;
+      }
+
+      .btn:disabled {
+        cursor: default;
+      }
+
+      /* RESULTS SCREEN */
+      .results-wrapper {
+        display: none;
+        flex: 1;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
+        min-height: 0;
+        padding: 2vh 6vw 4vh;
+        overflow-y: auto;
+      }
+
+      .score {
+        color: white;
+        -webkit-text-stroke: 1.5px darkorange;
+        font-size: clamp(2rem, 10vw, 4rem);
+        text-align: center;
+        margin-bottom: 0.3em;
+      }
+
+      .score-sub {
+        color: white;
+        -webkit-text-stroke: 1px darkorange;
+        font-size: clamp(1rem, 5vw, 1.6rem);
+        text-align: center;
+        margin-bottom: 1em;
+      }
+
+      .mistakes-title {
+        color: white;
+        -webkit-text-stroke: 1px darkorange;
+        font-size: clamp(1.1rem, 5vw, 1.8rem);
+        text-align: center;
+        margin-bottom: 0.6em;
+      }
+
+      .mistakes-list {
+        list-style: none;
+        width: 100%;
+        max-width: 560px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 2em;
+      }
+
+      .mistakes-list li {
+        background: white;
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 12px;
+        padding: 0.7em 1em;
+        font-family: var(--font-chalk);
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        gap: 0.3em;
+        font-size: clamp(0.9rem, 3.6vw, 1.15rem);
+      }
+
+      .mistakes-list .sentence {
+        font-weight: bold;
+      }
+
+      .mistakes-list .verdict {
+        color: var(--colour-wrong);
+        font-weight: bold;
+      }
+      .mistakes-list .verdict.was-right {
+        color: var(--colour-correct);
+      }
+
+      .play-again {
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        color: #333;
+        background: var(--colour-btn-face);
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 10px;
+        cursor: pointer;
+        padding: 0.7em 1.6em;
+        font-size: clamp(1.1rem, 5vw, 1.6rem);
+        transition: transform 0.1s ease;
+      }
+      .play-again:active {
+        transform: scale(0.97);
+        background: var(--colour-btn-active);
+      }
+
+      /* LANDSCAPE IPHONE - ask to rotate */
+      @media screen and (orientation: landscape) and (max-height: 450px) {
+        .rotate-message {
+          display: flex;
+        }
+        h1,
+        .progress,
+        .start-wrapper,
+        .game-wrapper,
+        .results-wrapper,
+        .back-btn {
+          display: none;
+        }
+      }
+
+      /* PORTRAIT IPHONE tweaks */
+      @media screen and (orientation: portrait) and (max-width: 430px) {
+        h1 {
+          font-size: clamp(1.2rem, 8vw, 2.1rem) !important;
+          margin-top: max(50px, env(safe-area-inset-top, 50px)) !important;
+        }
+        .game-wrapper {
+          padding: 1vh 6vw 3vh;
+        }
+        .question-card {
+          margin-bottom: 3vh;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="rotate-message">
+      <p>🔄 Please rotate your device to portrait mode!</p>
+    </div>
+
+    <a class="back-btn" href="grammar.html">← Back</a>
+    <h1>Right or Wrong?</h1>
+    <div class="progress" id="progress" style="display: none">
+      Question 1 / 20
+    </div>
+
+    <div class="start-wrapper" id="startWrapper">
+      <div class="start-title">Grammar Check</div>
+      <div class="start-sub">
+        Read each sentence. Is the grammar right or wrong?
+      </div>
+      <div class="start-buttons">
+        <button class="btn" data-count="20">20</button>
+        <button class="btn" data-count="30">30</button>
+        <button class="btn" data-count="40">40</button>
+      </div>
+    </div>
+
+    <div class="game-wrapper" id="gameWrapper" style="display: none">
+      <div class="question-card">
+        <div class="question-label">Is this sentence correct?</div>
+        <div class="question-sentence" id="questionSentence"></div>
+      </div>
+      <div class="answers" id="answers">
+        <button class="btn btn-right" id="rightBtn">
+          <span class="icon">✓</span><span class="label">RIGHT</span>
+        </button>
+        <button class="btn btn-wrong" id="wrongBtn">
+          <span class="icon">✗</span><span class="label">WRONG</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="results-wrapper" id="resultsWrapper" style="display: none">
+      <div class="score" id="score"></div>
+      <div class="score-sub" id="scoreSub"></div>
+      <div class="mistakes-title" id="mistakesTitle" style="display: none">
+        Sentences to review
+      </div>
+      <ul class="mistakes-list" id="mistakesList"></ul>
+      <button class="play-again" id="playAgainBtn">Play Again</button>
+    </div>
+
+    <script>
+      // ---- Grammar bank: sentence + isCorrect (based on A2 Grammar List) ----
+      // 150 grammatically correct sentences + 150 grammatically incorrect sentences
+      const GRAMMAR_BANK = [
+        // 1. Present simple
+        { text: "My brother plays soccer every weekend.", correct: true },
+        { text: "She studies English at school.", correct: true },
+        { text: "We eat lunch at noon.", correct: true },
+        {
+          text: "He works at a convenience store on Saturdays.",
+          correct: true,
+        },
+        { text: "Cats sleep for many hours a day.", correct: true },
+        { text: "I usually walk to school with my friends.", correct: true },
+        { text: "My brother play soccer every weekend.", correct: false },
+        { text: "She study English at school.", correct: false },
+        { text: "We eats lunch at noon.", correct: false },
+        {
+          text: "He work at a convenience store on Saturdays.",
+          correct: false,
+        },
+        { text: "Cats sleeps for many hours a day.", correct: false },
+        { text: "I usually walks to school with my friends.", correct: false },
+
+        // 2. Present continuous
+        { text: "I am doing my homework right now.", correct: true },
+        { text: "She is watching a movie tonight.", correct: true },
+        { text: "They are practicing basketball after school.", correct: true },
+        { text: "We are studying for the test this week.", correct: true },
+        { text: "He is talking on the phone with his mom.", correct: true },
+        { text: "The students are cleaning the classroom now.", correct: true },
+        { text: "I am do my homework right now.", correct: false },
+        { text: "She is watch a movie tonight.", correct: false },
+        { text: "They is practicing basketball after school.", correct: false },
+        { text: "We are study for the test this week.", correct: false },
+        { text: "He are talking on the phone with his mom.", correct: false },
+        { text: "The students is cleaning the classroom now.", correct: false },
+
+        // 3. Present perfect simple
+        { text: "I have finished my homework.", correct: true },
+        { text: "She has visited Kyoto three times.", correct: true },
+        { text: "They have not seen that movie yet.", correct: true },
+        { text: "We have already eaten dinner.", correct: true },
+        { text: "He has lost his phone again.", correct: true },
+        { text: "Have you ever tried natto?", correct: true },
+        { text: "I have finish my homework.", correct: false },
+        { text: "She has visit Kyoto three times.", correct: false },
+        { text: "They have not saw that movie yet.", correct: false },
+        { text: "We have already ate dinner.", correct: false },
+        { text: "He has losed his phone again.", correct: false },
+        { text: "Have you ever try natto?", correct: false },
+
+        // 4. Past simple
+        { text: "I played tennis yesterday.", correct: true },
+        { text: "She ate pizza last night.", correct: true },
+        { text: "We went to the beach last summer.", correct: true },
+        { text: "He studied for three hours yesterday.", correct: true },
+        { text: "They watched a scary movie on Friday.", correct: true },
+        { text: "I bought a new bag last week.", correct: true },
+        { text: "I play tennis yesterday.", correct: false },
+        { text: "She eated pizza last night.", correct: false },
+        { text: "We goed to the beach last summer.", correct: false },
+        { text: "He studyed for three hours yesterday.", correct: false },
+        { text: "They watch a scary movie on Friday.", correct: false },
+        { text: "I buyed a new bag last week.", correct: false },
+
+        // 5. Past continuous
+        { text: "I was studying when you called.", correct: true },
+        { text: "We were waiting for a long time.", correct: true },
+        { text: "She was cooking dinner at seven o'clock.", correct: true },
+        { text: "They were playing video games all afternoon.", correct: true },
+        { text: "He was sleeping when the phone rang.", correct: true },
+        { text: "It was raining when we left school.", correct: true },
+        { text: "I was study when you called.", correct: false },
+        { text: "We was waiting for a long time.", correct: false },
+        { text: "She were cooking dinner at seven o'clock.", correct: false },
+        { text: "They was playing video games all afternoon.", correct: false },
+        { text: "He was sleep when the phone rang.", correct: false },
+        { text: "It were raining when we left school.", correct: false },
+
+        // 6. Future simple (will)
+        { text: "I will call you later.", correct: true },
+        { text: "They will not arrive on time.", correct: true },
+        { text: "She will help you with your homework.", correct: true },
+        { text: "We will visit our grandparents next month.", correct: true },
+        { text: "It will probably rain tomorrow.", correct: true },
+        { text: "He will not forget your birthday.", correct: true },
+        { text: "I will calling you later.", correct: false },
+        { text: "They will not arrives on time.", correct: false },
+        { text: "She will helps you with your homework.", correct: false },
+        {
+          text: "We will visiting our grandparents next month.",
+          correct: false,
+        },
+        { text: "It will probably rains tomorrow.", correct: false },
+        { text: "He will not forgets your birthday.", correct: false },
+
+        // 7. Going to
+        { text: "I'm going to visit my friend tomorrow.", correct: true },
+        { text: "They are going to the beach this weekend.", correct: true },
+        { text: "She is going to study abroad next year.", correct: true },
+        { text: "We are going to watch the fireworks tonight.", correct: true },
+        { text: "He is going to buy a new bike.", correct: true },
+        { text: "I am going to join the tennis club.", correct: true },
+        { text: "I'm going to visiting my friend tomorrow.", correct: false },
+        { text: "They is going to the beach this weekend.", correct: false },
+        { text: "She are going to study abroad next year.", correct: false },
+        { text: "We going to watch the fireworks tonight.", correct: false },
+        { text: "He is going to buys a new bike.", correct: false },
+        { text: "I am go to join the tennis club.", correct: false },
+
+        // 8. There is/are
+        { text: "There is a fox in the garden.", correct: true },
+        { text: "There are three pigs in the field.", correct: true },
+        { text: "There is a new student in our class.", correct: true },
+        { text: "There are many books on the shelf.", correct: true },
+        { text: "There isn't any milk in the fridge.", correct: true },
+        { text: "There aren't many people at the park today.", correct: true },
+        { text: "There are a fox in the garden.", correct: false },
+        { text: "There is three pigs in the field.", correct: false },
+        { text: "There is many books on the shelf.", correct: false },
+        { text: "There are a new student in our class.", correct: false },
+        { text: "There isn't any milks in the fridge.", correct: false },
+        { text: "There aren't much people at the park today.", correct: false },
+
+        // 9. Subject-verb agreement
+        {
+          text: "The woman drinks eight glasses of water every day.",
+          correct: true,
+        },
+        {
+          text: "The couple are waiting for the bus to arrive.",
+          correct: true,
+        },
+        { text: "My parents work in Tokyo.", correct: true },
+        {
+          text: "The team practices every Monday and Wednesday.",
+          correct: true,
+        },
+        { text: "Each student has a different opinion.", correct: true },
+        { text: "The dog barks loudly at night.", correct: true },
+        {
+          text: "The woman drink eight glasses of water every day.",
+          correct: false,
+        },
+        {
+          text: "The couple is waiting for the bus to arrive.",
+          correct: false,
+        },
+        { text: "My parents works in Tokyo.", correct: false },
+        {
+          text: "The team practice every Monday and Wednesday.",
+          correct: false,
+        },
+        { text: "Each student have a different opinion.", correct: false },
+        { text: "The dog bark loudly at night.", correct: false },
+
+        // 10. Imperatives
+        { text: "Take an umbrella with you.", correct: true },
+        { text: "Don't forget to study.", correct: true },
+        { text: "Close the door, please.", correct: true },
+        { text: "Please turn off your phone during class.", correct: true },
+        { text: "Be quiet in the library.", correct: true },
+        { text: "Don't run in the hallway.", correct: true },
+        { text: "Takes an umbrella with you.", correct: false },
+        { text: "Don't forgets to study.", correct: false },
+        { text: "Closes the door, please.", correct: false },
+        { text: "Please turns off your phone during class.", correct: false },
+        { text: "Are quiet in the library.", correct: false },
+        { text: "Don't runs in the hallway.", correct: false },
+
+        // 11. Modals: ability / possibility
+        { text: "She can play the drums.", correct: true },
+        { text: "He can't go to school today.", correct: true },
+        { text: "I can swim very fast.", correct: true },
+        { text: "Could you help me with this question?", correct: true },
+        { text: "He may not be able to help.", correct: true },
+        { text: "We could go to the movies on Saturday.", correct: true },
+        { text: "She can plays the drums.", correct: false },
+        { text: "He can't goes to school today.", correct: false },
+        { text: "I can to swim very fast.", correct: false },
+        { text: "Could you helping me with this question?", correct: false },
+        { text: "He may not be help.", correct: false },
+        { text: "We could to go to the movies on Saturday.", correct: false },
+
+        // 12. Modals: necessity / obligation
+        { text: "You must finish your homework.", correct: true },
+        { text: "We have to wear a uniform at school.", correct: true },
+        { text: "You don't have to bring your textbook today.", correct: true },
+        { text: "Students must arrive before eight thirty.", correct: true },
+        { text: "He has to practice the piano every day.", correct: true },
+        { text: "You mustn't use your phone during the exam.", correct: true },
+        { text: "You must to finish your homework.", correct: false },
+        { text: "We have wear a uniform at school.", correct: false },
+        { text: "You don't has to bring your textbook today.", correct: false },
+        { text: "Students must arriving before eight thirty.", correct: false },
+        { text: "He have to practice the piano every day.", correct: false },
+        {
+          text: "You mustn't using your phone during the exam.",
+          correct: false,
+        },
+
+        // 13. Plural nouns
+        { text: "Dogs are cute animals.", correct: true },
+        { text: "There are three babies in the room.", correct: true },
+        { text: "I have two brothers and one sister.", correct: true },
+        { text: "The children are playing in the park.", correct: true },
+        { text: "Many students like this teacher.", correct: true },
+        { text: "The women are talking near the gate.", correct: true },
+        { text: "Dogs is cute animals.", correct: false },
+        { text: "There are three babys in the room.", correct: false },
+        { text: "I have two brothers and one sisters.", correct: false },
+        { text: "The childs are playing in the park.", correct: false },
+        { text: "Many student like this teacher.", correct: false },
+        { text: "The womans are talking near the gate.", correct: false },
+
+        // 14. Personal pronouns
+        { text: "She is my sister.", correct: true },
+        { text: "They are my classmates.", correct: true },
+        { text: "He gave the book to me.", correct: true },
+        { text: "We saw them at the station.", correct: true },
+        { text: "I told her the news.", correct: true },
+        { text: "It belongs to us.", correct: true },
+        { text: "Her is my sister.", correct: false },
+        { text: "Them are my classmates.", correct: false },
+        { text: "He gave the book to I.", correct: false },
+        { text: "We saw they at the station.", correct: false },
+        { text: "Me told her the news.", correct: false },
+        { text: "It belongs to we.", correct: false },
+
+        // 15. Countable / uncountable nouns
+        { text: "I have three apples.", correct: true },
+        { text: "There are two cats in the yard.", correct: true },
+        { text: "I need some water.", correct: true },
+        { text: "Do you have any money?", correct: true },
+        { text: "She doesn't eat much rice.", correct: true },
+        { text: "There isn't much information about it.", correct: true },
+        { text: "I have three apple.", correct: false },
+        { text: "There are two cat in the yard.", correct: false },
+        { text: "I need some waters.", correct: false },
+        { text: "Do you have any moneys?", correct: false },
+        { text: "She doesn't eat much rices.", correct: false },
+        { text: "There isn't much informations about it.", correct: false },
+
+        // 16. Demonstrative pronouns
+        { text: "This is my hat.", correct: true },
+        { text: "Those are your shoes.", correct: true },
+        { text: "That is a great idea.", correct: true },
+        { text: "These are my favorite songs.", correct: true },
+        { text: "This bag is heavier than that one.", correct: true },
+        { text: "Is this your umbrella?", correct: true },
+        { text: "This are my hat.", correct: false },
+        { text: "Those is your shoes.", correct: false },
+        { text: "That are a great idea.", correct: false },
+        { text: "These is my favorite songs.", correct: false },
+        { text: "This bag is heavier than those one.", correct: false },
+        { text: "Is these your umbrella?", correct: false },
+
+        // 17. Possessives
+        { text: "That is Mary's car.", correct: true },
+        { text: "The dog's tail is brown.", correct: true },
+        { text: "This is my book.", correct: true },
+        { text: "Is this yours?", correct: true },
+        { text: "That bike is his, not hers.", correct: true },
+        { text: "Our teacher's class starts at nine.", correct: true },
+        { text: "That is Mary car.", correct: false },
+        { text: "The dog tail is brown.", correct: false },
+        { text: "This is mine book.", correct: false },
+        { text: "Is this your's?", correct: false },
+        { text: "That bike is he, not her.", correct: false },
+        { text: "Our teacher class starts at nine.", correct: false },
+
+        // 18. Articles
+        { text: "The book is on the shelf.", correct: true },
+        { text: "The computer is broken.", correct: true },
+        { text: "A dog is barking outside.", correct: true },
+        { text: "An ant is very small.", correct: true },
+        { text: "She is a doctor.", correct: true },
+        { text: "He wants to be an engineer.", correct: true },
+        { text: "Book is on the shelf.", correct: false },
+        { text: "Computer is broken.", correct: false },
+        { text: "An dog is barking outside.", correct: false },
+        { text: "A ant is very small.", correct: false },
+        { text: "She is doctor.", correct: false },
+        { text: "He wants to be a engineer.", correct: false },
+
+        // 19. Comparatives and superlatives
+        { text: "The turtle is slower than the rabbit.", correct: true },
+        { text: "This is the biggest cake I've ever seen.", correct: true },
+        { text: "This book is more interesting than that one.", correct: true },
+        { text: "It's the most beautiful place in Japan.", correct: true },
+        { text: "My brother is taller than me.", correct: true },
+        { text: "Today is colder than yesterday.", correct: true },
+        { text: "The turtle is more slow than the rabbit.", correct: false },
+        { text: "This is the more big cake I've ever seen.", correct: false },
+        { text: "This book is interesting than that one.", correct: false },
+        { text: "It's the beautiful place in Japan.", correct: false },
+        { text: "My brother is more tall than me.", correct: false },
+        { text: "Today is more cold than yesterday.", correct: false },
+
+        // 20. Adverbs
+        { text: "They moved slowly through the crowd.", correct: true },
+        { text: "She walked quickly to the station.", correct: true },
+        { text: "The boy is very tall.", correct: true },
+        { text: "I really like this song.", correct: true },
+        { text: "I always brush my teeth before bed.", correct: true },
+        { text: "They sometimes come to school late.", correct: true },
+        { text: "They moved slow through the crowd.", correct: false },
+        { text: "She walked quick to the station.", correct: false },
+        { text: "The boy is very tallest.", correct: false },
+        { text: "I real like this song.", correct: false },
+        { text: "I brush always my teeth before bed.", correct: false },
+        { text: "They come sometimes to school late.", correct: false },
+
+        // 21. Conjunctions
+        { text: "I like pizza and he likes chips.", correct: true },
+        { text: "The cat is black but the dog is white.", correct: true },
+        { text: "We can eat pasta or pizza.", correct: true },
+        { text: "I passed because I studied a lot.", correct: true },
+        { text: "She was tired, so she went to bed early.", correct: true },
+        { text: "I wanted to go, but it started raining.", correct: true },
+        { text: "I like pizza and he like chips.", correct: false },
+        { text: "The cat is black but the dog are white.", correct: false },
+        { text: "We can eats pasta or pizza.", correct: false },
+        { text: "I passed because I studies a lot.", correct: false },
+        { text: "She were tired, so she went to bed early.", correct: false },
+        { text: "I wanted to go, but it start raining.", correct: false },
+
+        // 22. Prepositions of place
+        { text: "The pen is on the desk.", correct: true },
+        { text: "The cat is under the table.", correct: true },
+        { text: "My house is near the station.", correct: true },
+        {
+          text: "The bookstore is between the bank and the cafe.",
+          correct: true,
+        },
+        { text: "She sat next to her friend.", correct: true },
+        { text: "There is a park on the left.", correct: true },
+        { text: "The pen is on desk.", correct: false },
+        { text: "The cat is under table.", correct: false },
+        { text: "My house is near to the station.", correct: false },
+        { text: "The bookstore is between the bank the cafe.", correct: false },
+        { text: "She sat next her friend.", correct: false },
+        { text: "There is a park in the left.", correct: false },
+
+        // 23. Prepositions of time
+        { text: "The film starts at five o'clock.", correct: true },
+        { text: "We have class on Monday.", correct: true },
+        { text: "The weather is nice in May.", correct: true },
+        { text: "I usually study in the evening.", correct: true },
+        { text: "Her birthday is in December.", correct: true },
+        { text: "The shop closes at nine p.m.", correct: true },
+        { text: "The film starts in five o'clock.", correct: false },
+        { text: "We have class in Monday.", correct: false },
+        { text: "The weather is nice on May.", correct: false },
+        { text: "I usually study on the evening.", correct: false },
+        { text: "Her birthday is on December.", correct: false },
+        { text: "The shop closes on nine p.m.", correct: false },
+
+        // 24. Adjective + preposition
+        { text: "She's really good at football.", correct: true },
+        { text: "He's nervous about the meeting.", correct: true },
+        { text: "She's interested in the project.", correct: true },
+        { text: "Exercise is good for you.", correct: true },
+        { text: "I'm married to Helen.", correct: true },
+        { text: "He's proud of the team.", correct: true },
+        { text: "She's really good in football.", correct: false },
+        { text: "He's nervous for the meeting.", correct: false },
+        { text: "She's interested at the project.", correct: false },
+        { text: "Exercise is good of you.", correct: false },
+        { text: "I'm married with Helen.", correct: false },
+        { text: "He's proud for the team.", correct: false },
+
+        // 25. Negation
+        { text: "I don't like bread.", correct: true },
+        { text: "She isn't here today.", correct: true },
+        { text: "They don't have a car.", correct: true },
+        { text: "He doesn't play tennis.", correct: true },
+        { text: "We aren't ready yet.", correct: true },
+        { text: "I haven't finished my homework.", correct: true },
+        { text: "I no like bread.", correct: false },
+        { text: "She not is here today.", correct: false },
+        { text: "They doesn't have a car.", correct: false },
+        { text: "He don't play tennis.", correct: false },
+        { text: "We not are ready yet.", correct: false },
+        { text: "I haven't finish my homework.", correct: false },
+      ];
+
+      let QUESTIONS_PER_GAME = 20; // set by start-screen buttons
+
+      let questions = [];
+      let currentIndex = 0;
+      let score = 0;
+      let wrongAnswers = [];
+
+      const startWrapper = document.getElementById("startWrapper");
+      const gameWrapper = document.getElementById("gameWrapper");
+      const resultsWrapper = document.getElementById("resultsWrapper");
+      const questionSentenceEl = document.getElementById("questionSentence");
+      const rightBtn = document.getElementById("rightBtn");
+      const wrongBtn = document.getElementById("wrongBtn");
+      const progressEl = document.getElementById("progress");
+      const scoreEl = document.getElementById("score");
+      const scoreSubEl = document.getElementById("scoreSub");
+      const mistakesTitleEl = document.getElementById("mistakesTitle");
+      const mistakesListEl = document.getElementById("mistakesList");
+      const playAgainBtn = document.getElementById("playAgainBtn");
+
+      function shuffle(array) {
+        const arr = array.slice();
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+
+      function startGame() {
+        questions = shuffle(GRAMMAR_BANK).slice(0, QUESTIONS_PER_GAME);
+        currentIndex = 0;
+        score = 0;
+        wrongAnswers = [];
+        startWrapper.style.display = "none";
+        resultsWrapper.style.display = "none";
+        gameWrapper.style.display = "flex";
+        progressEl.style.display = "block";
+        renderQuestion();
+      }
+
+      function renderQuestion() {
+        const q = questions[currentIndex];
+        progressEl.textContent =
+          "Question " + (currentIndex + 1) + " / " + QUESTIONS_PER_GAME;
+        questionSentenceEl.textContent = q.text;
+
+        rightBtn.disabled = false;
+        wrongBtn.disabled = false;
+        rightBtn.classList.remove("correct", "wrong", "dim");
+        wrongBtn.classList.remove("correct", "wrong", "dim");
+      }
+
+      function handleAnswer(userSaysRight) {
+        rightBtn.disabled = true;
+        wrongBtn.disabled = true;
+
+        const q = questions[currentIndex];
+        const isCorrectAnswer = userSaysRight === q.correct;
+        const chosenBtn = userSaysRight ? rightBtn : wrongBtn;
+        const otherBtn = userSaysRight ? wrongBtn : rightBtn;
+        const trueBtn = q.correct ? rightBtn : wrongBtn;
+
+        if (isCorrectAnswer) {
+          chosenBtn.classList.add("correct");
+          otherBtn.classList.add("dim");
+        } else {
+          chosenBtn.classList.add("wrong");
+          trueBtn.classList.add("correct");
+        }
+
+        if (isCorrectAnswer) {
+          score++;
+        } else {
+          wrongAnswers.push({
+            text: q.text,
+            wasCorrect: q.correct,
+          });
+        }
+
+        setTimeout(() => {
+          currentIndex++;
+          if (currentIndex < questions.length) {
+            renderQuestion();
+          } else {
+            showResults();
+          }
+        }, 900);
+      }
+
+      rightBtn.addEventListener("click", () => handleAnswer(true));
+      wrongBtn.addEventListener("click", () => handleAnswer(false));
+
+      function showResults() {
+        gameWrapper.style.display = "none";
+        progressEl.style.display = "none";
+        resultsWrapper.style.display = "flex";
+
+        scoreEl.textContent = score + " / " + QUESTIONS_PER_GAME;
+        if (score === QUESTIONS_PER_GAME) {
+          scoreSubEl.textContent = "Perfect score! 🎉";
+        } else if (score >= QUESTIONS_PER_GAME * 0.7) {
+          scoreSubEl.textContent = "Great job!";
+        } else {
+          scoreSubEl.textContent = "Keep practising!";
+        }
+
+        mistakesListEl.innerHTML = "";
+        if (wrongAnswers.length > 0) {
+          mistakesTitleEl.style.display = "block";
+          wrongAnswers.forEach((w) => {
+            const li = document.createElement("li");
+            const sentSpan = document.createElement("span");
+            sentSpan.className = "sentence";
+            sentSpan.textContent = w.text;
+            const verdictSpan = document.createElement("span");
+            verdictSpan.className =
+              "verdict" + (w.wasCorrect ? " was-right" : "");
+            verdictSpan.textContent = w.wasCorrect
+              ? "This sentence was RIGHT"
+              : "This sentence was WRONG";
+            li.appendChild(sentSpan);
+            li.appendChild(verdictSpan);
+            mistakesListEl.appendChild(li);
+          });
+        } else {
+          mistakesTitleEl.style.display = "none";
+        }
+      }
+
+      // start-screen buttons pick the question count and begin the game
+      document.querySelectorAll(".start-buttons .btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          QUESTIONS_PER_GAME = parseInt(btn.dataset.count, 10);
+          startGame();
+        });
+      });
+
+      // play again re-shows the start screen so a new count can be picked
+      playAgainBtn.addEventListener("click", () => {
+        resultsWrapper.style.display = "none";
+        startWrapper.style.display = "flex";
+      });
+    </script>
+  </body>
+</html>
